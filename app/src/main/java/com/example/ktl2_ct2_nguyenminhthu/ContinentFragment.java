@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -114,7 +115,7 @@ public class ContinentFragment extends Fragment {
         RequestOptions options = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.DATA); // Tải ảnh từ dữ liệu đã được tải xuống, không sử dụng cache
         Glide.with(this)
-                .load(R.drawable.soon) // Đường dẫn đến tập tin GIF trong thư mục drawable
+                .load(R.drawable.soon)
                 .apply(options)
                 .into(fragmentContinentBinding.loadingImageView);
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
@@ -129,6 +130,14 @@ public class ContinentFragment extends Fragment {
                 fragmentContinentBinding.loadingImageView.setVisibility(View.GONE);
             }
         });
+        // Thiết lập thời gian chờ và số lần thử lại
+        int socketTimeout = 30000; // 30 giây
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                socketTimeout,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Thêm yêu cầu vào hàng đợi
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(request);
     }

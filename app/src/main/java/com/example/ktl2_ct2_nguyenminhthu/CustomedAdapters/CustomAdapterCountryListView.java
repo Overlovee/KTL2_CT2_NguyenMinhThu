@@ -35,14 +35,22 @@ public class CustomAdapterCountryListView extends ArrayAdapter {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Country item = list.get(position);
-        if(convertView==null)
-        {
-            convertView= LayoutInflater.from(context).inflate(layoutItem,null);
-
+        if(convertView==null) {
+            // Inflate layout và gán giá trị cho customCountryItemListviewBinding
+            LayoutInflater inflater = LayoutInflater.from(context);
+            customCountryItemListviewBinding = CustomCountryItemListviewBinding.inflate(inflater, parent, false);
+            convertView = customCountryItemListviewBinding.getRoot();
+            convertView.setTag(customCountryItemListviewBinding); // Gán tag cho convertView để lưu trữ customCountryItemListviewBinding
+        } else {
+            // Lấy customCountryItemListviewBinding từ convertView đã lưu trữ trước đó
+            customCountryItemListviewBinding = (CustomCountryItemListviewBinding) convertView.getTag();
         }
+
+        // Set các giá trị cho các view trong customCountryItemListviewBinding
         customCountryItemListviewBinding.textViewName.setText(item.getCommonName());
-        customCountryItemListviewBinding.textViewRegion.setText( "Continent: " + item.getContinent());
+        customCountryItemListviewBinding.textViewRegion.setText("Continent: " + item.getContinent());
         Glide.with(context).load(item.getImgUrl()).into(customCountryItemListviewBinding.imageViewItem);
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,4 +61,5 @@ public class CustomAdapterCountryListView extends ArrayAdapter {
         });
         return convertView;
     }
+
 }
